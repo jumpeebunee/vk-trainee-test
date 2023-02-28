@@ -8,6 +8,10 @@ const App = () => {
 
   const [board, setBoard] = useState<any>();
 
+  useEffect(() => {
+    getFields();
+  },[])
+
   const getMines = () => {
     const mines:any = [];
 
@@ -21,10 +25,6 @@ const App = () => {
     return mines;
   }
 
-  useEffect(() => {
-    getFields();
-  },[])
-
   const getFields = () => {
     const gameBoard = [];
     for (let x = 0; x < TOTAL__FIELDS; x += 1) {
@@ -35,6 +35,7 @@ const App = () => {
           y,
           isMine: getMines().find((mine: any) => mine.x === x && mine.y === y) ? true : false,
           isMark: '',
+          nearbyMines: '',
         }
         row.push(cell);
       }
@@ -49,8 +50,46 @@ const App = () => {
   }
 
   const handleLeftClick = (elem: any) => {
-    console.log(elem)
+    if (elem.isMark === 'open') {
+      return;
+    } 
+
+    const nearbyTiles = getNearbyTiles(elem);
+    const nearbyMines = nearbyTiles.filter(item => item.isMine);
+
+    const updateBoard = board.map((item: any) => {
+      return item.map((cell: any) => {
+        if (cell.x === elem.x && cell.y === elem.y) {
+          if (elem.isMine) {
+            cell.isMark = 'mine';
+          } else {
+            cell.isMark = 'open';
+            if (nearbyMines.length) {
+              cell.nearbyMines = nearbyMines.length;
+            }
+          }
+        }
+        return cell;
+      })
+    })
+    setBoard(updateBoard)
   }
+
+  const getNearbyTiles = (tile: any) => {
+
+    const nearbyMines = [];
+
+    for (let x = -1; x <= 1; x++) {
+      for (let y = -1; y <= 1; y++) {
+        if (tile.x + x >= 0 && tile.x + x < board.length) {
+          const newTile = board[tile.x + x]?.[tile.y + y];
+          if (newTile) nearbyMines.push(newTile);
+        }
+      }
+    }
+
+    return nearbyMines;
+   }
 
   const handleRightClick = (e: any, elem: any) => {
     e.preventDefault();
@@ -80,7 +119,9 @@ const App = () => {
       return 'mark';
     } else if (field.isMark === 'question') {
       return 'question'
-    } else if (field.isMine) {
+    } else if (field.isMark === 'open') {
+      return 'open'
+    } else if (field.isMark === 'mine') {
       return 'mine'
     }
   }
@@ -99,7 +140,7 @@ const App = () => {
                 onContextMenu={(e) => handleRightClick(e, field)}
                 onClick={(e) => handleLeftClick(field)}
                 className={`app__field ${getClass(field) ? getClass(field) : ''}`}>
-                {field.elem}
+                {field.nearbyMines}
             </div>
           ))}
           </>
