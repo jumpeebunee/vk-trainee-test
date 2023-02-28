@@ -1,41 +1,35 @@
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
+import { getCellClass } from './helpers/getCellClass';
+import { getRandomNumber } from './helpers/getRandomNumber';
+import { ICell, IMine } from './types/types';
 
 
 const App = () => {
 
-  const TOTAL__FIELDS = 16;
-  const TOTAL__MINES = 40;
-
-  const [board, setBoard] = useState<any>();
+  const [board, setBoard] = useState<ICell[][]>();
 
   useEffect(() => {
-    getFields();
+    createFields();
   },[])
 
-  const getMines = () => {
-    const mines:any = [];
-
-    while (mines.length < TOTAL__MINES) {
-      const newMine = {x: getRandomNumber(TOTAL__FIELDS), y: getRandomNumber(TOTAL__FIELDS)};
-      const isAdded = mines.find((item:any) => {
-        return item.x === newMine.x && item.y === newMine.y;
-      })
-      if (!isAdded) mines.push(newMine);
-    }
-    return mines;
+  const GAME_CONFIG = {
+    fields: 16,
+    mines: 40,
   }
 
-  const getFields = () => {
+  const createFields = () => {
     const gameBoard = [];
-    for (let x = 0; x < TOTAL__FIELDS; x += 1) {
+    const gameMines = createMines();
+
+    for (let x = 0; x < GAME_CONFIG.fields; x += 1) {
       const row = [];
-      for (let y = 0; y < TOTAL__FIELDS; y += 1) {
+      for (let y = 0; y < GAME_CONFIG.fields; y += 1) {
         const cell = {
           x,
           y,
-          isMine: getMines().find((mine: any) => mine.x === x && mine.y === y) ? true : false,
-          isMark: '',
-          nearbyMines: '',
+          status: '',
+          nearbyMines: 0,
+          isMine: gameMines.find((mine) => mine.x === x && mine.y === y) ? true : false,
         }
         row.push(cell);
       }
@@ -45,85 +39,84 @@ const App = () => {
     return gameBoard;
   }
 
-  const getRandomNumber = (max: number) => {
-    return Math.floor(Math.random() * (max - 0) + 0);
+  const createMines = () => {
+    const mines: IMine[] = [];
+
+    while (mines.length < GAME_CONFIG.mines) {
+      const mine = {x: getRandomNumber(GAME_CONFIG.fields), y: getRandomNumber(GAME_CONFIG.fields)};
+      const isAdded = mines.find((item: IMine) => {
+        return item.x === mine.x && item.y === mine.y;
+      })
+      if (!isAdded) mines.push(mine);
+    }
+    return mines;
   }
 
-  const handleLeftClick = (elem: any) => {
-    if (elem.isMark === 'open') {
-      return;
-    } 
+  const handleLeftClick = (cell: ICell) => {
+    if (cell.status === 'open') return;
 
-    const nearbyTiles = getNearbyTiles(elem);
-    const nearbyMines = nearbyTiles.filter(item => item.isMine);
+    const nearbyCells = getNearbyCells(cell);
+    const nearbyMines = nearbyCells.filter(item => item.isMine);
 
-    const updateBoard = board.map((item: any) => {
-      return item.map((cell: any) => {
-        if (cell.x === elem.x && cell.y === elem.y) {
-          if (elem.isMine) {
-            cell.isMark = 'mine';
-          } else {
-            cell.isMark = 'open';
-            if (nearbyMines.length) {
-              cell.nearbyMines = nearbyMines.length;
+    if (board) {
+      const updateBoard = board.map((itemRow: ICell[]) => {
+        return itemRow.map((itemCell: ICell) => {
+          if (itemCell.x === cell.x && itemCell.y === cell.y) {
+            if (cell.isMine) {
+              itemCell.status = 'mineActive';
+            } else {
+              itemCell.status = 'open';
+              if (nearbyMines.length) itemCell.nearbyMines = nearbyMines.length;
             }
           }
-        }
-        return cell;
+          return itemCell;
+        })
       })
-    })
-    setBoard(updateBoard)
+      
+      setBoard(updateBoard);
+
+      if (nearbyMines.length === 0) nearbyCells.map(item => handleLeftClick(item))
+    }
+    
   }
 
-  const getNearbyTiles = (tile: any) => {
+  const handleRightClick = (e: FormEvent<HTMLElement>, cell: ICell) => {
+    e.preventDefault();
+    if (board) {
+      const updateBoard = board.map((itemRow: ICell[]) => {
+        return itemRow.map((itemCell: ICell) => {
+          if (itemCell.x === cell.x && itemCell.y === cell.y) {
+            if (!cell.status) {
+              itemCell.status = 'mark';
+            } else if (itemCell.status === 'mark') {
+              itemCell.status = 'question';
+            } else if (itemCell.status === 'question') {
+              itemCell.status = '';
+            }
+          }
+          return itemCell;
+        })
+      })
+      setBoard(updateBoard)
+    }
+  }
+
+  const getNearbyCells = (cell: ICell) => {
 
     const nearbyMines = [];
 
-    for (let x = -1; x <= 1; x++) {
-      for (let y = -1; y <= 1; y++) {
-        if (tile.x + x >= 0 && tile.x + x < board.length) {
-          const newTile = board[tile.x + x]?.[tile.y + y];
-          if (newTile) nearbyMines.push(newTile);
+    if (board) {
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          if (cell.x + x >= 0 && cell.x + x < board.length) {
+            const newCell = board[cell.x + x]?.[cell.y + y];
+            if (newCell) nearbyMines.push(newCell);
+          }
         }
       }
     }
 
     return nearbyMines;
-   }
-
-  const handleRightClick = (e: any, elem: any) => {
-    e.preventDefault();
-    handleMark(elem);
-  }
-
-  const handleMark = (elem: any) => {
-    const updateBoard = board.map((item: any) => {
-      return item.map((cell: any) => {
-        if (cell.x === elem.x && cell.y === elem.y) {
-          if (!elem.isMark) {
-            cell.isMark = 'mark';
-          } else if (cell.isMark === 'mark') {
-            cell.isMark = 'question';
-          } else if (cell.isMark === 'question') {
-            cell.isMark = '';
-          }
-        }
-        return cell;
-      })
-    })
-    setBoard(updateBoard)
-  }
-
-  function getClass(field: any) {
-    if (field.isMark === 'mark') {
-      return 'mark';
-    } else if (field.isMark === 'question') {
-      return 'question'
-    } else if (field.isMark === 'open') {
-      return 'open'
-    } else if (field.isMark === 'mine') {
-      return 'mine'
-    }
   }
 
   return (
@@ -139,8 +132,9 @@ const App = () => {
                 key={field.x + field.y} 
                 onContextMenu={(e) => handleRightClick(e, field)}
                 onClick={(e) => handleLeftClick(field)}
-                className={`app__field ${getClass(field) ? getClass(field) : ''}`}>
-                {field.nearbyMines}
+                data-mine={field.isMine ? 'yessss': ''}
+                className={`app__field ${field.status ? getCellClass(field.status) : ''}`}>
+                {field.nearbyMines ? field.nearbyMines : ''}
             </div>
           ))}
           </>

@@ -32,15 +32,15 @@
   border: 1px solid black;
 }
 
-.mine {
+.cell__open {
+  background-color: #7B7B7B;
+}
+.cell__mine-active {
   background-color: red;
 }
-.mark {
+.cell__mark  {
   background-color: #121212;
 }
-.question {
+.cell__question {
   background-color: #181888;
-}
-.open {
-  background-color: #7B7B7B;
 }
