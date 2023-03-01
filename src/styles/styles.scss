@@ -6,7 +6,7 @@
 
 .app__game {
   width: 300px;
-  height: 300px;
+  height: 400px;
   padding: 20px;
   background-color: #BDBDBD;
   box-shadow:
@@ -52,4 +52,15 @@
 .cell__question {
   background-image: url(../assets/sprite.png);
   background-position: 208px 32px;
+}
+
+.game__mines-tables {
+  display: flex;
+}
+
+.game__mines-table {
+  width: 13px;
+  height: 23px;
+  background-image: url(../assets/sprite.png);
+  background-position: 0px 0px;
 }

@@ -1,3 +1,4 @@
+import { nanoid } from '@reduxjs/toolkit';
 import { FC, FormEvent } from 'react'
 import { ICell } from '../types/types';
 import BoardFields from './BoardFields'
@@ -17,6 +18,7 @@ const BoardMain:FC<BoardMainProps> = ({board, handleLeftClick, handleRightClick}
         {board.map((boardItem: ICell[]) =>
           boardItem.map((field: ICell) => 
           <BoardFields
+            key={nanoid()}
             handleLeftClick={handleLeftClick}
             handleRightClick={handleRightClick}
             field={field}

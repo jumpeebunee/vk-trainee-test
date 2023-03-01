@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 import BoardMain from './components/BoardMain';
+import GameMines from './components/GameMines';
 import { getRandomNumber } from './helpers/getRandomNumber';
 import { ICell, IMine } from './types/types';
 
@@ -7,6 +8,7 @@ import { ICell, IMine } from './types/types';
 const App = () => {
 
   const [board, setBoard] = useState<ICell[][]>();
+  const [mines, setMines] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
   const [isStart, setIsStart] = useState(false);
 
@@ -51,6 +53,8 @@ const App = () => {
       })
       if (!isAdded) mines.push(mine);
     }
+
+    setMines(GAME_CONFIG.mines);
     return mines;
   }
 
@@ -69,7 +73,7 @@ const App = () => {
   }
   
   const handleLeftClick = (cell: ICell) => {
-    if (cell.status === 'open' || gameFinished) return;
+    if (cell.status || gameFinished) return;
 
     const nearbyCells = getNearbyCells(cell);
     const nearbyMines = nearbyCells.filter(item => item.isMine);
@@ -104,13 +108,16 @@ const App = () => {
 
   const handleRightClick = (e: FormEvent<HTMLElement>, cell: ICell) => {
     e.preventDefault();
+    if (gameFinished || mines <= 0) return;
     if (board) {
       const updateBoard = board.map((itemRow: ICell[]) => {
         return itemRow.map((itemCell: ICell) => {
           if (itemCell.x === cell.x && itemCell.y === cell.y) {
             if (!cell.status) {
+              if (mines > 0) setMines(prev => prev - 1);
               itemCell.status = 'mark';
             } else if (itemCell.status === 'mark') {
+              setMines(prev => prev + 1);
               itemCell.status = 'question';
             } else if (itemCell.status === 'question') {
               itemCell.status = '';
@@ -156,6 +163,7 @@ const App = () => {
   return (
     <div className='app'>
       <div className='app__game'>
+        <GameMines mines={mines.toString().padStart(2, '0')}/>
         <ul className='app__fields'>
           <BoardMain
             board={board as ICell[][]}
