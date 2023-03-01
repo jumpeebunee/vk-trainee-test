@@ -1,12 +1,12 @@
 import { FormEvent, useEffect, useState } from 'react'
 import BoardMain from './components/BoardMain';
 import GameMines from './components/GameMines';
+import GameTimer from './components/GameTimer';
 import { getRandomNumber } from './helpers/getRandomNumber';
 import { ICell, IMine } from './types/types';
 
 
 const App = () => {
-
   const [board, setBoard] = useState<ICell[][]>();
   const [mines, setMines] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
@@ -15,6 +15,7 @@ const App = () => {
   useEffect(() => {
     createFields();
   },[])
+
 
   const GAME_CONFIG = {
     fields: 16,
@@ -73,6 +74,7 @@ const App = () => {
   }
   
   const handleLeftClick = (cell: ICell) => {
+    
     if (cell.status || gameFinished) return;
 
     const nearbyCells = getNearbyCells(cell);
@@ -88,17 +90,17 @@ const App = () => {
               finishGame();
             } else {
               if (cell.isMine) {
-                setIsStart(true);
                 getNewMinePosition();
               } 
               itemCell.status = 'open';
               if (nearbyMines.length) itemCell.nearbyMines = nearbyMines.length;
             }
           }
+          if (!isStart) setIsStart(true);
           return itemCell;
         })
       })
-      
+
       setBoard(updateBoard);
 
       if (nearbyMines.length === 0) nearbyCells.map(item => handleLeftClick(item))
@@ -131,7 +133,6 @@ const App = () => {
   }
 
   const getNearbyCells = (cell: ICell) => {
-
     const nearbyMines = [];
 
     if (board) {
@@ -157,13 +158,17 @@ const App = () => {
         return itemCell;
       })
     })
+    setIsStart(false);
     setBoard(updateBoard);
   }
 
   return (
     <div className='app'>
       <div className='app__game'>
-        <GameMines mines={mines.toString().padStart(2, '0')}/>
+        <div className='app__game-info'>
+          <GameMines mines={mines.toString().padStart(3, '0')}/>
+          <GameTimer isStart={isStart}/>
+        </div>
         <ul className='app__fields'>
           <BoardMain
             board={board as ICell[][]}
