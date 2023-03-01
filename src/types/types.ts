@@ -16,4 +16,5 @@ export type IStatuses = {
   mineActive: string;
   mark: string;
   question: string;
+  mineUnactive: string;
 }

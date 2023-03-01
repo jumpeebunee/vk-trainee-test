@@ -5,8 +5,8 @@
 }
 
 .app__game {
-  width: 556px;
-  height: 640px;
+  width: 300px;
+  height: 300px;
   padding: 20px;
   background-color: #BDBDBD;
   box-shadow:
@@ -27,20 +27,29 @@
 }
 
 .app__field {
-  width: 32px;
-  height: 32px;
-  border: 1px solid black;
+  width: 16px;
+  height: 16px;
+  background-image: url(../assets/sprite.png);
+  background-position: 0px 32px;
 }
 
 .cell__open {
-  background-color: #7B7B7B;
+  background-image: url(../assets/sprite.png);
+  background-position: 122px 33px;
 }
 .cell__mine-active {
-  background-color: red;
+  background-image: url(../assets/sprite.png);
+  background-position: 37px 33px;
+}
+.cell__mine-unactive {
+  background-image: url(../assets/sprite.png);
+  background-position: 54px 33px
 }
 .cell__mark  {
-  background-color: #121212;
+  background-image: url(../assets/sprite.png);
+  background-position: 105px 32px;
 }
 .cell__question {
-  background-color: #181888;
+  background-image: url(../assets/sprite.png);
+  background-position: 208px 32px;
 }

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { getCellClass } from './helpers/getCellClass';
+import BoardMain from './components/BoardMain';
 import { getRandomNumber } from './helpers/getRandomNumber';
 import { ICell, IMine } from './types/types';
 
@@ -7,6 +7,8 @@ import { ICell, IMine } from './types/types';
 const App = () => {
 
   const [board, setBoard] = useState<ICell[][]>();
+  const [gameFinished, setGameFinished] = useState(false);
+  const [isStart, setIsStart] = useState(false);
 
   useEffect(() => {
     createFields();
@@ -52,8 +54,22 @@ const App = () => {
     return mines;
   }
 
+  const getNewMinePosition = () => {
+    let finded = false;
+    const updateBoard = board?.map((itemRow: ICell[]) => {
+      return itemRow.map((itemCell: ICell) => {
+        if (!itemCell.isMine && !finded && !itemCell.status) {
+          itemCell.isMine = true;
+          finded = true;
+        }
+        return itemCell;
+      })
+    })
+    setBoard(updateBoard);
+  }
+  
   const handleLeftClick = (cell: ICell) => {
-    if (cell.status === 'open') return;
+    if (cell.status === 'open' || gameFinished) return;
 
     const nearbyCells = getNearbyCells(cell);
     const nearbyMines = nearbyCells.filter(item => item.isMine);
@@ -62,9 +78,15 @@ const App = () => {
       const updateBoard = board.map((itemRow: ICell[]) => {
         return itemRow.map((itemCell: ICell) => {
           if (itemCell.x === cell.x && itemCell.y === cell.y) {
-            if (cell.isMine) {
+            if (cell.isMine && isStart) {
               itemCell.status = 'mineActive';
+              setGameFinished(true);
+              finishGame();
             } else {
+              if (cell.isMine) {
+                setIsStart(true);
+                getNewMinePosition();
+              } 
               itemCell.status = 'open';
               if (nearbyMines.length) itemCell.nearbyMines = nearbyMines.length;
             }
@@ -119,27 +141,27 @@ const App = () => {
     return nearbyMines;
   }
 
+  const finishGame = () => {
+    const updateBoard = board?.map((itemRow: ICell[]) => {
+      return itemRow.map((itemCell: ICell) => {
+        if (itemCell.isMine && itemCell.status !== 'mineActive') {
+          itemCell.status = 'mineUnactive';
+        }
+        return itemCell;
+      })
+    })
+    setBoard(updateBoard);
+  }
+
   return (
     <div className='app'>
       <div className='app__game'>
         <ul className='app__fields'>
-          {board 
-          ?
-          <>
-          {board.map((boardItem: any) =>
-            boardItem.map((field: any) => 
-              <div
-                key={field.x + field.y} 
-                onContextMenu={(e) => handleRightClick(e, field)}
-                onClick={(e) => handleLeftClick(field)}
-                data-mine={field.isMine ? 'yessss': ''}
-                className={`app__field ${field.status ? getCellClass(field.status) : ''}`}>
-                {field.nearbyMines ? field.nearbyMines : ''}
-            </div>
-          ))}
-          </>
-          :
-          <></>}
+          <BoardMain
+            board={board as ICell[][]}
+            handleLeftClick={handleLeftClick}
+            handleRightClick={handleRightClick}
+          />
         </ul>
       </div>
     </div>
