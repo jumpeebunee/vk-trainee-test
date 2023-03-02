@@ -16,7 +16,7 @@ const App = () => {
 
   const GAME_CONFIG = {
     fields: 16,
-    mines: 40,
+    mines: 2,
   }
 
   const dispatch = useDispatch();
@@ -25,21 +25,6 @@ const App = () => {
     createFields();
   },[])
 
-  const checkWin = () => {
-    let openedCells = 0;
-    board?.map((item) => {
-      item.map((item2) => {
-        if (item2.status === '') {
-          openedCells += 1;
-        }
-      })
-    })
-    if (openedCells === 0 && isStart) {
-      setIsStart(false);
-      setGameFinished(true);
-      dispatch(changeStatus('win'));
-    }
-  }
 
   const createFields = () => {
     setBoard([]);
@@ -125,6 +110,7 @@ const App = () => {
               }
               itemCell.status = 'open';
               if (nearbyMines.length) itemCell.nearbyMines += nearbyMines.length;
+              checkWin();
             }
           }
           if (!isStart) setIsStart(true);
@@ -133,7 +119,6 @@ const App = () => {
       })
 
       setBoard(updateBoard);
-      checkWin();
 
       if (nearbyMines.length === 0) {
         nearbyCells.map(item => handleLeftClick(item));
@@ -188,7 +173,9 @@ const App = () => {
   const finishGame = () => {
     const updateBoard = board?.map((itemRow: ICell[]) => {
       return itemRow.map((itemCell: ICell) => {
-        if (itemCell.isMine && itemCell.status !== 'mineActive') {
+        if (itemCell.isMine && itemCell.status === 'mark') {
+          itemCell.status = 'mineDetected';
+        } else if (itemCell.isMine && itemCell.status !== 'mineActive') {
           itemCell.status = 'mineUnactive';
         }
         return itemCell;
@@ -196,8 +183,28 @@ const App = () => {
     })
     dispatch(changeStatus('loose'));
     setIsStart(false);
+    setGameFinished(true);
     setBoard(updateBoard);
   }
+
+  const checkWin = () => {
+    if (!gameFinished) {
+      let openedCells = 0;
+      board?.map((item) => {
+        item.map((item2) => {
+          if (item2.status === '') {
+            openedCells += 1;
+          }
+        })
+      })
+      if (openedCells === 0 && isStart) {
+        setIsStart(false);
+        setGameFinished(true);
+        dispatch(changeStatus('win'));
+      }
+    }
+  }
+
   
   return (
     <div className='app'>
