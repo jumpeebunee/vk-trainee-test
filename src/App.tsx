@@ -14,24 +14,33 @@ const App = () => {
   const [mines, setMines] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
   const [isStart, setIsStart] = useState(false);
-  const [mineDetected, setMineDetected] = useState(0);
 
   const GAME_CONFIG = {
     fields: 16,
-    mines: 40,
+    mines: 6,
   }
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     createFields();
   },[])
 
-  useMemo(() => {
-    if (mineDetected === GAME_CONFIG.mines) {
-      alert('Win')
+  const checkWin = () => {
+    let openedCells = 0;
+    board?.map((item) => {
+      item.map((item2) => {
+        if (item2.status === '') {
+          openedCells += 1;
+        }
+      })
+    })
+    if (openedCells === 0 && isStart) {
+      setIsStart(false);
+      setGameFinished(true);
+      dispatch(changeStatus('win'));
     }
-  },[mineDetected])
-
-  const dispatch = useDispatch();
+  }
 
   const createFields = () => {
     setBoard([]);
@@ -111,6 +120,7 @@ const App = () => {
               if (cell.isMine)  {
                 getNewMinePosition(cell);
                 itemCell.nearbyMines -= 1;
+                itemCell.isMine = false;
                 nearbyCells = getNearbyCells(cell);
                 nearbyMines = nearbyCells.filter(item => item.isMine);
               }
@@ -124,20 +134,17 @@ const App = () => {
       })
 
       setBoard(updateBoard);
+      checkWin();
 
-      if (nearbyMines.length === 0) nearbyCells.map(item => handleLeftClick(item))
-    } 
+      if (nearbyMines.length === 0) {
+        nearbyCells.map(item => handleLeftClick(item));
+      }
+    }
   }
 
   const handleRightClick = (e: FormEvent<HTMLElement>, cell: ICell) => {
     e.preventDefault();
     if (gameFinished || cell.status === 'open') return;
-
-    if (cell.isMine && !cell.status) {
-      setMineDetected(prev => prev + 1);
-    } else if (cell.isMine && cell.status === 'mark') {
-      setMineDetected(prev => prev - 1);
-    } 
 
     if (board) {
       const updateBoard = board.map((itemRow: ICell[]) => {
@@ -156,7 +163,9 @@ const App = () => {
           return itemCell;
         })
       })
+
       setBoard(updateBoard);
+      checkWin();
     }
   }
 
