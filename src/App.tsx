@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import BoardMain from './components/BoardMain';
 import GameControl from './components/GameControl';
 import GameMines from './components/GameMines';
@@ -8,7 +8,6 @@ import { ICell, IMine } from './types/types';
 import { changeStatus } from './features/StatusSlice';
 import { useDispatch } from 'react-redux';
 
-
 const App = () => {
   const [board, setBoard] = useState<ICell[][]>();
   const [mines, setMines] = useState(0);
@@ -17,7 +16,7 @@ const App = () => {
 
   const GAME_CONFIG = {
     fields: 16,
-    mines: 6,
+    mines: 40,
   }
 
   const dispatch = useDispatch();
@@ -119,7 +118,7 @@ const App = () => {
             } else {
               if (cell.isMine)  {
                 getNewMinePosition(cell);
-                itemCell.nearbyMines -= 1;
+                itemCell.nearbyMines -= itemCell.nearbyMines === 0 ? 0 : 1;
                 itemCell.isMine = false;
                 nearbyCells = getNearbyCells(cell);
                 nearbyMines = nearbyCells.filter(item => item.isMine);
