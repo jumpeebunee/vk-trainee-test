@@ -1,9 +1,9 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import BoardReducer from '../features/BoardSlice';
+import StatusReducer from '../features/StatusSlice';
 
 export const store = configureStore({
   reducer: {
-    board: BoardReducer,
+    status: StatusReducer,
   },
 });
 

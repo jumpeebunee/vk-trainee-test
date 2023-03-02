@@ -1,9 +1,12 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 import BoardMain from './components/BoardMain';
+import GameControl from './components/GameControl';
 import GameMines from './components/GameMines';
 import GameTimer from './components/GameTimer';
 import { getRandomNumber } from './helpers/getRandomNumber';
 import { ICell, IMine } from './types/types';
+import { changeStatus } from './features/StatusSlice';
+import { useDispatch } from 'react-redux';
 
 
 const App = () => {
@@ -11,18 +14,31 @@ const App = () => {
   const [mines, setMines] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
   const [isStart, setIsStart] = useState(false);
+  const [mineDetected, setMineDetected] = useState(0);
+
+  const GAME_CONFIG = {
+    fields: 16,
+    mines: 5,
+  }
 
   useEffect(() => {
     createFields();
   },[])
 
+  useMemo(() => {
+    if (mineDetected === GAME_CONFIG.mines) {
+      alert('Win')
+    }
+  },[mineDetected])
 
-  const GAME_CONFIG = {
-    fields: 16,
-    mines: 40,
-  }
+  const dispatch = useDispatch();
 
   const createFields = () => {
+    setBoard([]);
+    dispatch(changeStatus('playing'));
+    setIsStart(false);
+    setGameFinished(false);
+
     const gameBoard = [];
     const gameMines = createMines();
 
@@ -59,13 +75,18 @@ const App = () => {
     return mines;
   }
 
-  const getNewMinePosition = () => {
+  const getNewMinePosition = (cell: ICell) => {
     let finded = false;
-    const updateBoard = board?.map((itemRow: ICell[]) => {
-      return itemRow.map((itemCell: ICell) => {
+    const updateBoard = board?.map((itemRow: ICell[], indexRow) => {
+      return itemRow.map((itemCell: ICell, indexCell) => {
         if (!itemCell.isMine && !finded && !itemCell.status) {
           itemCell.isMine = true;
           finded = true;
+        }
+        if (indexRow === cell.x && indexCell === cell.y) {
+          itemCell.isMine = false;
+          console.log(itemCell)
+          itemCell.nearbyMines -= 1;
         }
         return itemCell;
       })
@@ -77,8 +98,8 @@ const App = () => {
     
     if (cell.status || gameFinished) return;
 
-    const nearbyCells = getNearbyCells(cell);
-    const nearbyMines = nearbyCells.filter(item => item.isMine);
+    let nearbyCells = getNearbyCells(cell);
+    let nearbyMines = nearbyCells.filter(item => item.isMine);
 
     if (board) {
       const updateBoard = board.map((itemRow: ICell[]) => {
@@ -89,11 +110,14 @@ const App = () => {
               setGameFinished(true);
               finishGame();
             } else {
-              if (cell.isMine) {
-                getNewMinePosition();
-              } 
+              if (cell.isMine)  {
+                getNewMinePosition(cell);
+                itemCell.nearbyMines -= 1;
+                nearbyCells = getNearbyCells(cell);
+                nearbyMines = nearbyCells.filter(item => item.isMine);
+              }
               itemCell.status = 'open';
-              if (nearbyMines.length) itemCell.nearbyMines = nearbyMines.length;
+              if (nearbyMines.length) itemCell.nearbyMines += nearbyMines.length;
             }
           }
           if (!isStart) setIsStart(true);
@@ -104,18 +128,24 @@ const App = () => {
       setBoard(updateBoard);
 
       if (nearbyMines.length === 0) nearbyCells.map(item => handleLeftClick(item))
-    }
-    
+    } 
   }
 
   const handleRightClick = (e: FormEvent<HTMLElement>, cell: ICell) => {
     e.preventDefault();
-    if (gameFinished || mines <= 0) return;
+    if (gameFinished || cell.status === 'open') return;
+
+    if (cell.isMine && !cell.status) {
+      setMineDetected(prev => prev + 1);
+    } else if (cell.isMine && cell.status === 'mark') {
+      setMineDetected(prev => prev - 1);
+    } 
+
     if (board) {
       const updateBoard = board.map((itemRow: ICell[]) => {
         return itemRow.map((itemCell: ICell) => {
           if (itemCell.x === cell.x && itemCell.y === cell.y) {
-            if (!cell.status) {
+            if (!cell.status && mines > 0) {
               if (mines > 0) setMines(prev => prev - 1);
               itemCell.status = 'mark';
             } else if (itemCell.status === 'mark') {
@@ -128,7 +158,7 @@ const App = () => {
           return itemCell;
         })
       })
-      setBoard(updateBoard)
+      setBoard(updateBoard);
     }
   }
 
@@ -158,16 +188,18 @@ const App = () => {
         return itemCell;
       })
     })
+    dispatch(changeStatus('loose'));
     setIsStart(false);
     setBoard(updateBoard);
   }
-
+  
   return (
     <div className='app'>
       <div className='app__game'>
         <div className='app__game-info'>
           <GameMines mines={mines.toString().padStart(3, '0')}/>
-          <GameTimer isStart={isStart}/>
+          <GameControl createFields={createFields}/>
+          <GameTimer isStart={isStart} gameFinished={gameFinished}/>
         </div>
         <ul className='app__fields'>
           <BoardMain

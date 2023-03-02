@@ -4,9 +4,10 @@ import NumberTable from './NumberTable';
 
 interface GameTimerProps {
   isStart: boolean;
+  gameFinished: boolean;
 }
 
-const GameTimer:FC<GameTimerProps> = ({isStart}) => {
+const GameTimer:FC<GameTimerProps> = ({isStart, gameFinished}) => {
 
   const [seconds, setSeconds] = useState(0);
 
@@ -16,9 +17,11 @@ const GameTimer:FC<GameTimerProps> = ({isStart}) => {
       intervalId = setInterval(() => {
         setSeconds((prevSeconds) => prevSeconds + 1);
       }, 1000);
+    } else if (!gameFinished) {
+      setSeconds(0)
     }
     return () => clearInterval(intervalId);
-  }, [isStart]);
+  }, [isStart, gameFinished]);
 
   return (
     <div className='game__timer'>
