@@ -1,5 +1,5 @@
 import { nanoid } from '@reduxjs/toolkit';
-import { FC, FormEvent } from 'react'
+import { FC, FormEvent, useEffect, useState } from 'react'
 import { ICell } from '../types/types';
 import BoardFields from './BoardFields'
 
@@ -10,6 +10,7 @@ interface BoardMainProps {
 }
 
 const BoardMain:FC<BoardMainProps> = ({board, handleLeftClick, handleRightClick}) => {
+
   return (
     <>
       {board 

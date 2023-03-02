@@ -1,4 +1,4 @@
-import { FC, FormEvent } from 'react'
+import { FC, FormEvent, useEffect, useState } from 'react'
 import { ICell } from '../types/types';
 import { getCellClass } from '../helpers/getCellClass';
 
@@ -9,6 +9,7 @@ interface BoardFieldsProps {
 }
 
 const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, field}) => {
+
   return (
     <button
       onClick={(e) => handleLeftClick(field)}

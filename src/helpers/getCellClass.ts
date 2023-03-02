@@ -5,6 +5,7 @@ const statuses: IStatuses = {
   mineActive: 'cell__mine-active',
   mineUnactive: 'cell__mine-unactive',
   mineDetected: 'cell__mine-detected',
+  scared: 'cell__mine-scared',
   mark: 'cell__mark',
   question: 'cell__question',
 }

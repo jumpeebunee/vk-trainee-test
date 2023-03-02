@@ -85,7 +85,7 @@ const App = () => {
   }
   
   const handleLeftClick = (cell: ICell) => {
-    
+
     if (cell.status || gameFinished) return;
 
     let nearbyCells = getNearbyCells(cell);
@@ -203,6 +203,18 @@ const App = () => {
     }
   }
 
+  const handleUp = () => {
+    dispatch(changeStatus('play'))
+  }
+
+  const handleDown = () => {
+    dispatch(changeStatus('scared'))
+  }
+
+  const handleLeave = () => {
+    dispatch(changeStatus('play'))
+  }
+
   return (
     <div className='app'>
       <div className='app__game'>
@@ -211,7 +223,11 @@ const App = () => {
           <GameControl createFields={createFields}/>
           <GameTimer isStart={isStart} gameFinished={gameFinished}/>
         </div>
-        <ul className={`app__fields ${gameFinished ? 'app__fields-finish' : ''}`}>
+        <ul 
+          onMouseUp={handleUp}
+          onMouseDown={handleDown}
+          onMouseLeave={handleLeave}
+          className={`app__fields ${gameFinished ? 'app__fields-finish' : ''}`}>
           <BoardMain
             board={board as ICell[][]}
             handleLeftClick={handleLeftClick}

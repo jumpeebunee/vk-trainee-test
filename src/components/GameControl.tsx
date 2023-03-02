@@ -19,8 +19,11 @@ const GameControl:FC<GameControlProps> = ({createFields}) => {
   }
 
   return (
-    <button onClick={handleControl} 
-    className={`game__control ${gameStatus === 'loose' ? 'game__control_loose' : ''} ${gameStatus === 'win' ? 'game__control_win' : ''}`}></button>
+    <button 
+    onClick={handleControl} 
+    className={
+      `game__control ${gameStatus === 'loose' ? 'game__control_loose' : ''}${gameStatus === 'win' ? 'game__control_win' : ''}${gameStatus === 'scared' ? 'game__control_scared' : ''}`
+    }></button>
   )
 }
 

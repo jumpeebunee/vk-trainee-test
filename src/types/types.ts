@@ -15,6 +15,7 @@ export type IStatuses = {
   open: string;
   mineActive: string;
   mark: string;
+  scared: string;
   question: string;
   mineUnactive: string;
   mineDetected: string;

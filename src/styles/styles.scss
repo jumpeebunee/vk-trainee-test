@@ -32,6 +32,10 @@
   }
 }
 
+.app__field-active {
+  background-position: -17px 33px;
+}
+
 .cell__open {
   background-image: url(../assets/sprite.png);
   background-position: 122px 33px;
@@ -84,7 +88,9 @@
     background-position: -27px 60px;
   }
 }
-
+.game__control_scared {
+  background-position: 85px 60px;
+}
 .game__control_loose {
   background-position: -108px 60px;
 }
