@@ -18,7 +18,7 @@ const App = () => {
 
   const GAME_CONFIG = {
     fields: 16,
-    mines: 5,
+    mines: 40,
   }
 
   useEffect(() => {
@@ -85,8 +85,6 @@ const App = () => {
         }
         if (indexRow === cell.x && indexCell === cell.y) {
           itemCell.isMine = false;
-          console.log(itemCell)
-          itemCell.nearbyMines -= 1;
         }
         return itemCell;
       })
