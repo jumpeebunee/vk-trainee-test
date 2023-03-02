@@ -16,7 +16,7 @@ const App = () => {
 
   const GAME_CONFIG = {
     fields: 16,
-    mines: 40,
+    mines: 4,
   }
 
   const dispatch = useDispatch();
@@ -190,7 +190,7 @@ const App = () => {
       let openedCells = 0;
       board?.map((item) => {
         item.map((item2) => {
-          if (item2.status === '') {
+          if (item2.status === '' || item2.status === 'question') {
             openedCells += 1;
           }
         })
