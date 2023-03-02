@@ -11,17 +11,20 @@ const GameTimer:FC<GameTimerProps> = ({isStart, gameFinished}) => {
 
   const [seconds, setSeconds] = useState(0);
 
+  let intervalId: NodeJS.Timer;
+
   useEffect(() => {
-    let intervalId: NodeJS.Timer;
-    if (isStart) {
+    if (gameFinished) {
+      clearInterval(intervalId);
+    } else if (!isStart) {
+      setSeconds(0);
+    } else {
       intervalId = setInterval(() => {
         setSeconds((prevSeconds) => prevSeconds + 1);
       }, 1000);
-    } else if (!gameFinished) {
-      setSeconds(0)
     }
     return () => clearInterval(intervalId);
-  }, [isStart, gameFinished]);
+  }, [isStart, seconds]);
 
   return (
     <div className='game__timer'>

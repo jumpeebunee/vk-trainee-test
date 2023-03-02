@@ -16,7 +16,7 @@ const App = () => {
 
   const GAME_CONFIG = {
     fields: 16,
-    mines: 2,
+    mines: 40,
   }
 
   const dispatch = useDispatch();
@@ -24,7 +24,6 @@ const App = () => {
   useEffect(() => {
     createFields();
   },[])
-
 
   const createFields = () => {
     setBoard([]);
@@ -182,7 +181,6 @@ const App = () => {
       })
     })
     dispatch(changeStatus('loose'));
-    setIsStart(false);
     setGameFinished(true);
     setBoard(updateBoard);
   }
@@ -205,7 +203,6 @@ const App = () => {
     }
   }
 
-  
   return (
     <div className='app'>
       <div className='app__game'>
