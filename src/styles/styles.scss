@@ -17,6 +17,10 @@
   flex-wrap: wrap;
 }
 
+.app__fields-finish {
+  pointer-events: none;
+}
+
 .app__field {
   width: 16px;
   height: 16px;

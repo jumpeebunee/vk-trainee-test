@@ -207,7 +207,7 @@ const App = () => {
           <GameControl createFields={createFields}/>
           <GameTimer isStart={isStart} gameFinished={gameFinished}/>
         </div>
-        <ul className='app__fields'>
+        <ul className={`app__fields ${gameFinished ? 'app__fields-finish' : ''}`}>
           <BoardMain
             board={board as ICell[][]}
             handleLeftClick={handleLeftClick}
