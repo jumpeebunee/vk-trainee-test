@@ -47,19 +47,16 @@ const App = () => {
 
   //* creating mines
   const createMines = () => {
-    const mines: IMine[] = [];
+    const mines = new Set<IMine>();
 
-    while (mines.length < GAME_CONFIG.mines) {
-      const mine = {
-        x: getRandomNumber(GAME_CONFIG.fields),
-        y: getRandomNumber(GAME_CONFIG.fields)
-      };
-      const isAdded = mines.find((item: IMine) => {
-        return item.x === mine.x && item.y === mine.y;
-      })
-      if (!isAdded) mines.push(mine);
+    while (mines.size < GAME_CONFIG.mines) {
+      const x = getRandomNumber(GAME_CONFIG.fields);
+      const y = getRandomNumber(GAME_CONFIG.fields);
+      const mine = {x, y};
+      mines.add(mine);
     }
-    return mines;
+    
+    return Array.from(mines);;
   }
 
   const getNearbyCells = (cell: ICell) => {
