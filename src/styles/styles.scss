@@ -1,20 +1,33 @@
+body {
+  background-color: #121212;
+}
+
 .app {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100vh;
 }
 
 .app__game {
-  width: 270px;
-  height: 400px;
+  width: 278px;
   padding: 7px;
+  margin-top: 40px;
   background-color: #BDBDBD;
+  position: relative;
+  border-color:  #fff #7b7b7b #7b7b7b #fff;
+  border-style: solid;
+  border-width: 2px;
+  transform: scale(2);
 }
 
 .app__fields {
   margin-top: 7px;
   display: flex;
   flex-wrap: wrap;
+  border-color: #7b7b7b #fff #fff #7b7b7b;
+  border-style: solid;
+  border-width: 2px;
 }
 
 .app__fields-finish {
@@ -26,10 +39,6 @@
   height: 16px;
   background-image: url(../assets/sprite.png);
   background-position: 0px 32px;
-
-  &:active {
-    background-position: -17px 33px;
-  }
 }
 
 .app__field-active {
@@ -64,6 +73,9 @@
   justify-content: space-between;
   padding: 5px;
   background-color: #C0C0C0;
+  border-color: #7b7b7b #fff #fff #7b7b7b;
+  border-style: solid;
+  border-width: 2px;
 }
 .game__mines-tables {
   display: flex;
