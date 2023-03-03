@@ -47,7 +47,8 @@ body {
 
 .cell__open {
   background-image: url(../assets/sprite.png);
-  background-position: 122px 33px;
+  background-position: 122px 33px; 
+  cursor:auto;
 }
 .cell__mine-active {
   background-image: url(../assets/sprite.png);

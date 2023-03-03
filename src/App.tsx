@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState, MouseEvent } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { changeStatus } from './features/StatusSlice';
 import { ICell, IMine } from './types/types';
@@ -212,17 +212,18 @@ const App = () => {
     setBoard([]);
     setIsStart(false);
     setGameFinished(false);
+    setMines(GAME_CONFIG.mines);
     dispatch(changeStatus(GAME_STATUSES.playing));
   }
 
   //* a frightened smiley
-  const handleDown = (e: MouseEvent<HTMLUListElement>) => {
-    if (e.button === 2) return;
+  const handleDown = (e: any) => {
+    if (e.button === 2 || e.target.className !== 'app__field ') return;
     dispatch(changeStatus(GAME_STATUSES.scared))
   }
 
   const handleLeave = () => {
-    dispatch(changeStatus('play'))
+    dispatch(changeStatus('play'));
   }
 
   return (

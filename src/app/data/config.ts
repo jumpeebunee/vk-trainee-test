@@ -2,7 +2,7 @@ import { IStatuses } from "../../types/types"
 
 export const GAME_CONFIG = {
   fields: 16,
-  mines: 90,
+  mines: 4,
 }
 
 export const GAME_STATUSES = {
