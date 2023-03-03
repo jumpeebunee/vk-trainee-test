@@ -60,19 +60,20 @@ const App = () => {
   }
 
   const getNearbyCells = (cell: ICell) => {
+    if (!board) return [];
+  
     const nearbyMines = [];
+    const coordinates = [-1, 0, 1];
 
-    if (board) {
-      for (let x = -1; x <= 1; x++) {
-        for (let y = -1; y <= 1; y++) {
-          if (cell.x + x >= 0 && cell.x + x < board.length) {
-            const newCell = board[cell.x + x]?.[cell.y + y];
-            if (newCell) nearbyMines.push(newCell);
-          }
-        }
+    for (let x of coordinates) {
+      for (let y of coordinates) {
+        if (x === 0 && y === 0) continue;
+        const newX = cell.x + x;
+        const newY = cell.y + y;
+        if (board[newX]?.[newY]) nearbyMines.push(board[newX][newY]);
       }
     }
-
+    
     return nearbyMines;
   }
   
