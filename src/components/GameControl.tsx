@@ -3,10 +3,10 @@ import { status } from '../features/StatusSlice';
 import { useSelector } from 'react-redux';
 
 interface GameControlProps {
-  createFields: () => void;
+  clearBoard: () => void;
 }
 
-const GameControl:FC<GameControlProps> = ({createFields}) => {
+const GameControl:FC<GameControlProps> = ({clearBoard}) => {
 
   const gameStatus = useSelector(status);
 
@@ -14,10 +14,8 @@ const GameControl:FC<GameControlProps> = ({createFields}) => {
     reloadGame();
   }
 
-  const reloadGame = () => {
-    createFields();
-  }
-
+  const reloadGame = () => clearBoard();
+  
   return (
     <button 
     onClick={handleControl} 

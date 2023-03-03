@@ -17,6 +17,7 @@ const App = () => {
   const [isStart, setIsStart] = useState(false);
 
   const dispatch = useDispatch();
+  const fields = GAME_CONFIG.fields;
 
   useEffect(() => {
     createFields();
@@ -24,29 +25,25 @@ const App = () => {
   }, [])
 
   //* create board and add mines;
-  const createFields = () => {
-    
-    clearGameSettings();
 
-    const updatedBoard = [];
+  const createFields = () => {
     const generatedMines = createMines();
 
-    for (let x = 0; x < GAME_CONFIG.fields; x += 1) {
-      const row = [];
-      for (let y = 0; y < GAME_CONFIG.fields; y += 1) {
-        const cell = {
+    const updatedBoard = Array.from({ length: fields }, (_, x) =>
+      Array.from({ length: fields }, (_, y) => {
+        const isMine = generatedMines.some((mine) => mine.x === x && mine.y === y);
+        return {
           x,
           y,
           status: '',
           nearbyMines: 0,
-          isMine: generatedMines.find((mine) => mine.x === x && mine.y === y) ? true : false,
-        }
-        row.push(cell);
-      }
-      updatedBoard.push(row);
-    }
+          isMine,
+        };
+      })
+    );
+
     setBoard(updatedBoard);
-  }
+  };
 
   //* creating mines
   const createMines = () => {
@@ -214,12 +211,13 @@ const App = () => {
     setGameFinished(false);
     setMines(GAME_CONFIG.mines);
     dispatch(changeStatus(GAME_STATUSES.playing));
+    createFields();
   }
 
   //* a frightened smiley
   const handleDown = (e: any) => {
     if (e.button === 2 || e.target.className !== 'app__field ') return;
-    dispatch(changeStatus(GAME_STATUSES.scared))
+    dispatch(changeStatus(GAME_STATUSES.scared));
   }
 
   const handleLeave = () => {
@@ -231,7 +229,7 @@ const App = () => {
       <div className='app__game'>
         <div className='app__game-info'>
           <GameMines mines={mines.toString().padStart(3, '0')}/>
-          <GameControl createFields={createFields}/>
+          <GameControl clearBoard={clearGameSettings}/>
           <GameTimer isStart={isStart} gameFinished={gameFinished}/>
         </div>
         <ul 

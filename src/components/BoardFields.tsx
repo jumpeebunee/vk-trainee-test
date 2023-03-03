@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState, MouseEvent } from 'react'
+import { FC, FormEvent, useState, MouseEvent, memo } from 'react'
 import { ICell } from '../types/types';
 import { getCellClass } from '../helpers/getCellClass';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,7 +10,6 @@ interface BoardFieldsProps {
 }
 
 const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, field}) => {
-  
   const dispatch = useDispatch();
   const statusS = useSelector(status);
 
@@ -46,5 +45,6 @@ const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, fi
     </button>
   )
 }
+
 
 export default BoardFields
