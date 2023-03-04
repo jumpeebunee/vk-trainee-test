@@ -2,13 +2,13 @@ body {
   background-color: #121212;
 }
 
+//* app
 .app {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
 }
-
 .app__game {
   width: 278px;
   padding: 7px;
@@ -20,7 +20,6 @@ body {
   border-width: 2px;
   transform: scale(2);
 }
-
 .app__fields {
   margin-top: 7px;
   display: flex;
@@ -29,22 +28,20 @@ body {
   border-style: solid;
   border-width: 2px;
 }
-
 .app__fields-finish {
   pointer-events: none;
 }
 
+//* cells
 .app__field {
   width: 16px;
   height: 16px;
   background-image: url(../assets/sprite.png);
   background-position: 0px 33px;
 }
-
 .app__field-active {
   background-position: -17px 33px;
 }
-
 .cell__open {
   background-image: url(../assets/sprite.png);
   background-position: 122px 33px; 
@@ -87,10 +84,11 @@ body {
   background-image: url(../assets/sprite.png);
   background-position: 0px 0px;
 }
+
+//* control
 .game__timer {
   display: flex;
 }
-
 .game__control {
   width: 26px;
   height: 26px;
@@ -110,7 +108,6 @@ body {
 .game__control_win {
   background-position: 58px 60px;
 }
-
 .active {
   background-position: -17px 33px;
 }
