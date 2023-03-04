@@ -10,14 +10,14 @@ body {
   height: 100vh;
 }
 .app__game {
-  width: 278px;
+  width: 282px;
   padding: 7px;
   margin-top: 40px;
   background-color: #BDBDBD;
   position: relative;
-  border-color:  #fff #7b7b7b #7b7b7b #fff;
+  border-color: #fff #7b7b7b #7b7b7b #fff;
   border-style: solid;
-  border-width: 2px;
+  border-width: 3px;
   transform: scale(2);
 }
 .app__fields {
@@ -26,7 +26,7 @@ body {
   flex-wrap: wrap;
   border-color: #7b7b7b #fff #fff #7b7b7b;
   border-style: solid;
-  border-width: 2px;
+  border-width: 3px;
 }
 .app__fields-finish {
   pointer-events: none;
@@ -73,7 +73,7 @@ body {
   background-color: #C0C0C0;
   border-color: #7b7b7b #fff #fff #7b7b7b;
   border-style: solid;
-  border-width: 2px;
+  border-width: 3px;
 }
 .game__mines-tables {
   display: flex;
