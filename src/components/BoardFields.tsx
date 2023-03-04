@@ -15,7 +15,7 @@ const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, fi
 
   const [isActive, setIsActive] = useState(false);
 
-  const checkMouseOn = (cell: ICell) => {
+  const handleMouseHover = (cell: ICell) => {
     if (cell.status !== '' && statusS === 'scared') {
       dispatch(changeStatus('playing'));
     } else if  (cell.status === '' && statusS === 'scared') {
@@ -23,23 +23,24 @@ const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, fi
     }
   }
 
-  const checkMouseHold = (e: MouseEvent<HTMLButtonElement>, field: ICell) => {
+  const handleMouseUp = (e: MouseEvent<HTMLButtonElement>, field: ICell) => {
     if (e.button !== 2 && statusS === 'scared') {
       handleLeftClick(field);
     }
   }
 
-  const checkMouseDown = (cell: ICell) => {
+  const handleMouseDown = (e: MouseEvent<HTMLButtonElement>, cell: ICell) => {
+    if (e.button === 2) handleRightClick(e, field);
     if (cell.status === '') setIsActive(true);
   }
 
   return (
     <button
-      onContextMenu={(e) => handleRightClick(e, field)}
-      onMouseOver={() => checkMouseOn(field)}
+      onContextMenu={(e) => e.preventDefault()}
+      onMouseOver={() => handleMouseHover(field)}
       onMouseLeave={() => setIsActive(false)}
-      onMouseDown={() => checkMouseDown(field)}
-      onMouseUp={(e: any) => checkMouseHold(e, field)}
+      onMouseDown={(e) => handleMouseDown(e, field)}
+      onMouseUp={(e) => handleMouseUp(e, field)}
       style={{backgroundPosition: field.nearbyMines ? `-${16 * field.nearbyMines - 16 + field.nearbyMines - 1}px 16px` : ''}}
       className={`app__field ${field.status ? getCellClass(field.status) : ''}${isActive ? 'active' : ''}`}>
     </button>
