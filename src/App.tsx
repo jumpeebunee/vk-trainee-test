@@ -11,9 +11,10 @@ import GameTimer from './components/GameTimer';
 
 const App = () => {
 
-  const [board, setBoard] = useState<ICell[][]>();
+  const [board, setBoard] = useState<ICell[][]>([]);
   const [mines, setMines] = useState(GAME_CONFIG.mines);
   const [gameFinished, setGameFinished] = useState(false);
+  const [openedCells, setOpenedCells] = useState(0);
   const [isStart, setIsStart] = useState(false);
 
   const dispatch = useDispatch();
@@ -21,10 +22,17 @@ const App = () => {
 
   useEffect(() => {
     createFields();
-
   }, [])
 
-  //* create board and add mines;
+  useEffect(() => {
+    if (openedCells === 256 && isStart) {
+      setIsStart(false);
+      setGameFinished(true);
+      dispatch(changeStatus(GAME_STATUSES.win));
+    }
+  }, [openedCells])
+
+  //* Создание доски и генерация мин на поле
 
   const createFields = () => {
     const generatedMines = createMines();
@@ -45,7 +53,7 @@ const App = () => {
     setBoard(updatedBoard);
   };
 
-  //* creating mines
+  //* Создание мин
   const createMines = () => {
     const mines = new Set<IMine>();
 
@@ -60,8 +68,6 @@ const App = () => {
   }
 
   const getNearbyCells = (cell: ICell) => {
-    if (!board) return [];
-  
     const nearbyMines = [];
     const coordinates = [-1, 0, 1];
 
@@ -97,6 +103,12 @@ const App = () => {
 
     setBoard(updateBoard);
   }
+
+  const changeMinesStatus = (itemCell: ICell) => {
+    getNewMinePosition();
+    itemCell.nearbyMines -= itemCell.nearbyMines > 0 ? 1 : 0;
+    itemCell.isMine = false;
+  }
   
   const handleLeftClick = (cell: ICell) => {
 
@@ -105,37 +117,39 @@ const App = () => {
     let nearbyCells = getNearbyCells(cell);
     let nearbyMines = nearbyCells.filter(item => item.isMine);
 
-    if (board) {
-      const updateBoard = board.slice().map((itemRow: ICell[]) => {
-        return itemRow.map((itemCell: ICell) => {
-          if (itemCell.x === cell.x && itemCell.y === cell.y) {
-            if (cell.isMine && isStart) {
-              itemCell.status = FIELD_STATUSES.mineActive;
-              setGameFinished(true);
-              finishGame();
-            } else {
-              if (cell.isMine)  {
-                getNewMinePosition();
-                itemCell.nearbyMines -= itemCell.nearbyMines === 0 ? 0 : 1;
-                itemCell.isMine = false;
-                nearbyCells = getNearbyCells(cell);
-                nearbyMines = nearbyCells.filter(item => item.isMine);
-              }
-              if (nearbyMines.length) itemCell.nearbyMines += nearbyMines.length;
-              itemCell.status = FIELD_STATUSES.open;
-              dispatch(changeStatus('play'))
-              checkWin();
+    const updateBoard = board.slice().map((itemRow: ICell[]) => {
+      return itemRow.map((itemCell: ICell) => {
+        if (itemCell.x === cell.x && itemCell.y === cell.y) {
+          //* Если клетка - мина и игра уже идет;
+          if (cell.isMine && isStart) {
+            itemCell.status = FIELD_STATUSES.mineActive;
+            setGameFinished(true);
+            finishGame();
+          } else {
+            //* Если первый клик по мине;
+            if (cell.isMine)  {
+              changeMinesStatus(itemCell);
+              nearbyCells = getNearbyCells(cell);
+              nearbyMines = nearbyCells.filter(item => item.isMine);
             }
+            if (nearbyMines.length) {
+             itemCell.nearbyMines += nearbyMines.length;
+            }
+            itemCell.status = FIELD_STATUSES.open;
+            dispatch(changeStatus('play'));
+            setOpenedCells(prev => prev + 1);
           }
-          if (!isStart) setIsStart(true);
-          return itemCell;
-        })
+        }
+        return itemCell;
       })
+    })
 
-      setBoard(updateBoard);
+    if (!isStart) setIsStart(true);
+    setBoard(updateBoard);
 
-      //* open nearby empty cells
-      if (nearbyMines.length === 0) nearbyCells.map(item => handleLeftClick(item));
+    //* open nearby empty cells
+    if (nearbyMines.length === 0) {
+      nearbyCells.forEach(item => handleLeftClick(item))
     }
   }
 
@@ -144,27 +158,26 @@ const App = () => {
 
     if (gameFinished || cell.status === FIELD_STATUSES.open) return;
 
-    if (board) {
-      const updateBoard = board.slice().map((itemRow: ICell[]) => {
-        return itemRow.map((itemCell: ICell) => {
-          if (itemCell.x === cell.x && itemCell.y === cell.y) {
-            if (!cell.status && mines > 0) {
-              if (mines > 0) setMines(prev => prev - 1);
-              itemCell.status = FIELD_STATUSES.mark;
-            } else if (itemCell.status === FIELD_STATUSES.mark) {
-              setMines(prev => prev + 1);
-              itemCell.status = FIELD_STATUSES.question;
-            } else if (itemCell.status === FIELD_STATUSES.question) {
-              itemCell.status = '';
-            }
+    const updateBoard = board.slice().map((itemRow: ICell[]) => {
+      return itemRow.map((itemCell: ICell) => {
+        if (itemCell.x === cell.x && itemCell.y === cell.y) {
+          if (!cell.status && mines > 0) {
+            setMines(prev => prev - 1);
+            itemCell.status = FIELD_STATUSES.mark;
+            setOpenedCells(prev => prev + 1);
+          } else if (itemCell.status === FIELD_STATUSES.mark) {
+            setMines(prev => prev + 1);
+            itemCell.status = FIELD_STATUSES.question;
+            setOpenedCells(prev => prev - 1);
+          } else if (itemCell.status === FIELD_STATUSES.question) {
+            itemCell.status = '';
           }
-          return itemCell;
-        })
+        }
+        return itemCell;
       })
+    })
 
-      setBoard(updateBoard);
-      checkWin();
-    }
+    setBoard(updateBoard);
   }
 
   //* update game board
@@ -185,29 +198,12 @@ const App = () => {
     setBoard(updateBoard);
   }
 
-  const checkWin = () => {
-    if (!gameFinished) {
-      let openedCells = 0;
-      board?.map((item) => {
-        item.map((item2) => {
-          if (item2.status === '' || item2.status === FIELD_STATUSES.question) {
-            openedCells += 1;
-          }
-        })
-      })
-      if (openedCells === 0 && isStart) {
-        setIsStart(false);
-        setGameFinished(true);
-        dispatch(changeStatus(GAME_STATUSES.win));
-      }
-    }
-  }
-
   const clearGameSettings = () => {
     setBoard([]);
     setIsStart(false);
     setGameFinished(false);
     setMines(GAME_CONFIG.mines);
+    setOpenedCells(0);
     dispatch(changeStatus(GAME_STATUSES.playing));
     createFields();
   }
