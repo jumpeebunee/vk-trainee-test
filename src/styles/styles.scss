@@ -38,7 +38,7 @@ body {
   width: 16px;
   height: 16px;
   background-image: url(../assets/sprite.png);
-  background-position: 0px 32px;
+  background-position: 0px 33px;
 }
 
 .app__field-active {
@@ -63,11 +63,11 @@ body {
 }
 .cell__mark  {
   background-image: url(../assets/sprite.png);
-  background-position: 105px 32px;
+  background-position: 105px 33px;
 }
 .cell__question {
   background-image: url(../assets/sprite.png);
-  background-position: 208px 32px;
+  background-position: 210px 33px;
 }
 .app__game-info {
   display: flex;

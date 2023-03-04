@@ -1,5 +1,5 @@
 import { nanoid } from '@reduxjs/toolkit';
-import { FC, FormEvent, useEffect, useState } from 'react'
+import { FC, FormEvent } from 'react'
 import { ICell } from '../types/types';
 import BoardFields from './BoardFields'
 

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState, MouseEvent } from 'react'
 import { useDispatch } from 'react-redux';
 import { changeStatus } from './features/StatusSlice';
 import { ICell, IMine } from './types/types';
@@ -157,6 +157,7 @@ const App = () => {
     e.preventDefault();
 
     if (gameFinished || cell.status === FIELD_STATUSES.open) return;
+    if (mines === 0 && cell.status === '') return;
 
     const updateBoard = board.slice().map((itemRow: ICell[]) => {
       return itemRow.map((itemCell: ICell) => {
@@ -209,8 +210,9 @@ const App = () => {
   }
 
   //* a frightened smiley
-  const handleDown = (e: any) => {
-    if (e.button === 2 || e.target.className !== 'app__field ') return;
+  const handleDown = (e: MouseEvent<HTMLUListElement>) => {
+    const target = e.target as HTMLElement; 
+    if (e.button === 2 || target.className !== 'app__field ') return;
     dispatch(changeStatus(GAME_STATUSES.scared));
   }
 
