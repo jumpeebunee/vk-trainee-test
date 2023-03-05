@@ -28,8 +28,8 @@ const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, fi
     }
   }
 
-  const handleMouseHover = (e:any,cell: ICell) => {
-    if (e.buttons === 2 && e.buttons === 0) return;
+  const handleMouseHover = (e: MouseEvent<HTMLButtonElement> ,cell: ICell) => {
+    if (e.buttons === 2 || e.buttons === 0) return;
     if (cell.status !== '' && e.buttons === 1) {
       dispatch(changeStatus(GAME_STATUSES.playing));
     } else if (cell.status === '' && e.buttons === 1) {

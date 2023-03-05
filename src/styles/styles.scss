@@ -12,7 +12,6 @@ body {
 .app__game {
   width: 282px;
   padding: 7px;
-  margin-top: 40px;
   background-color: #BDBDBD;
   position: relative;
   border-color: #fff #7b7b7b #7b7b7b #fff;
@@ -110,4 +109,16 @@ body {
 }
 .active {
   background-position: -17px 33px;
+}
+
+
+@media (max-width: 608px) {
+  .app__game {
+    transform: scale(1.5);
+  }
+}
+@media (max-width: 476px) {
+  .app__game {
+    transform: scale(1);
+  }
 }
