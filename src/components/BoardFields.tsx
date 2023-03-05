@@ -15,15 +15,6 @@ const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, fi
 
   const [isActive, setIsActive] = useState(false);
 
-  const handleMouseHover = (e:any,cell: ICell) => {
-    if (cell.status !== '' && e.buttons === 1) {
-      dispatch(changeStatus(GAME_STATUSES.playing));
-    } else if  (cell.status === '' && e.buttons === 1) {
-      setIsActive(true);
-      dispatch(changeStatus(GAME_STATUSES.scared));
-    }
-  }
-
   const handleMouseUp = (e: MouseEvent<HTMLButtonElement>, field: ICell) => {
     if (e.button !== 2) {
       handleLeftClick(field);
@@ -37,10 +28,20 @@ const BoardFields:FC<BoardFieldsProps> = ({handleLeftClick, handleRightClick, fi
     }
   }
 
+  const handleMouseHover = (e:any,cell: ICell) => {
+    if (e.buttons === 2 && e.buttons === 0) return;
+    if (cell.status !== '' && e.buttons === 1) {
+      dispatch(changeStatus(GAME_STATUSES.playing));
+    } else if (cell.status === '' && e.buttons === 1) {
+      setIsActive(true);
+      dispatch(changeStatus(GAME_STATUSES.scared));
+    }
+  }
+
   return (
     <button
         onContextMenu={(e) => e.preventDefault()}
-        onMouseOver={(e) => handleMouseHover(e,field)}
+        onMouseMove={(e) => handleMouseHover(e,field)}
         onMouseLeave={() =>  setIsActive(false)}
         onMouseDown={(e) => handleMouseDown(e, field)}
         onMouseUp={(e) => handleMouseUp(e, field)}
