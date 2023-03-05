@@ -49,22 +49,22 @@ const App = () => {
         };
       })
     );
-
     setBoard(updatedBoard);
   };
 
   //* Создание мин
   const createMines = () => {
-    const mines = new Set<IMine>();
+    const mines: IMine[] = []
 
-    while (mines.size < GAME_CONFIG.mines) {
+    while (mines.length < GAME_CONFIG.mines) {
       const x = getRandomNumber(GAME_CONFIG.fields);
       const y = getRandomNumber(GAME_CONFIG.fields);
       const mine = {x, y};
-      mines.add(mine);
+      const isAdded = mines.find((item) => item.x === x && item.y === y);
+      if (!isAdded) mines.push(mine);
     }
-    
-    return Array.from(mines);;
+
+    return mines;
   }
 
   const getNearbyCells = (cell: ICell) => {
@@ -122,9 +122,9 @@ const App = () => {
         if (itemCell.x === cell.x && itemCell.y === cell.y) {
           //* Если клетка - мина и игра уже идет;
           if (cell.isMine && isStart) {
+            finishGame();
             itemCell.status = FIELD_STATUSES.mineActive;
             setGameFinished(true);
-            finishGame();
           } else {
             //* Если первый клик по мине;
             if (cell.isMine)  {
@@ -148,7 +148,7 @@ const App = () => {
     setBoard(updateBoard);
 
     //* open nearby empty cells
-    if (nearbyMines.length === 0) {
+    if (nearbyMines.length === 0 && !cell.isMine) {
       nearbyCells.forEach(item => handleLeftClick(item))
     }
   }
