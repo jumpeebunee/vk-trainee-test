@@ -20,7 +20,7 @@ const GameTimer:FC<GameTimerProps> = ({isStart, gameFinished}) => {
       setSeconds(0);
     } else {
       intervalId = setInterval(() => {
-        setSeconds((prevSeconds) => prevSeconds + 1);
+        if (seconds < 999) setSeconds((prevSeconds) => prevSeconds + 1);
       }, 1000);
     }
     return () => clearInterval(intervalId);
