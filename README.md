@@ -1,46 +1,31 @@
-# Getting Started with Create React App
+# Сапёр
+[Live demo](https://jumpeebune-vk-trainee.netlify.app/). Простая игра сапер, написанная на React, TypeScript и SCSS с использованием приложенного спрайта.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
+## Описание игры
+Игра представляет собой поле размером 16 на 16 клеток, на котором расставлены случайным образом 40 мин. Слева от поля находится счётчик мин, который показывает сколько мин осталось найти.
 
-## Available Scripts
+Игрок открывает ячейки на поле, кликая на них левой кнопкой мыши. Если ячейка содержит мину, игра проиграна. Если ячейка не содержит мины, но рядом с ней есть другие ячейки без мин, то в них также будет открыта.
 
-In the project directory, you can run:
+Чтобы отметить место, где находится мина, можно кликнуть правой кнопкой мыши на ячейку. Это поможет игроку запомнить место, где находится мина и избежать её взрыва.
 
-### `npm start`
+При клике по смайлику в центре поля игра начинается заново.
+## Дополнительные функции
+- Если игрок нажимает на правую кнопку мыши, флажок ставится на ячейке, где находится мина.
+- Если игрок нажимает на правую кнопку мыши ещё раз, на ячейку ставится вопросительный знак, показывающий сомнения игрока по поводу наличия мины в этой ячейке.
+- Если игрок кликает на ячейку правой кнопкой мыши в третий раз, выделение снимается.
+- Когда пользователь нажимает на клавишу, но ещё не отпустил её, появляется смайлик со страхом.
+- Когда пользователь проигрывает, смайлик меняется на грустный и открывается карта мин. Таймер останавливается.
+- Когда пользователь открывает все ячейки на поле, кроме ячеек с минами, смайлик надевает солнечные очки, таймер останавливается.
+## Законченная работа
+![image](https://user-images.githubusercontent.com/105386597/222890676-0ab2e058-91b1-406e-ab2b-351905bdb8df.png)
+# Инструкция по установке и запуску
+Следуйте этим инструкциям, чтобы установить и запустить игру.
+## Установка
+1. Убедитесь, что у вас установлен Node.js и npm.
+2. Склонируйте этот репозиторий на свой компьютер или загрузите архив и распакуйте его.
+3. Откройте терминал и перейдите в корневую папку проекта.
+4. Введите команду npm install, чтобы установить необходимые зависимости.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Запуск
+1. Введите команду npm start, чтобы запустить приложение.
+2. Откройте браузер и перейдите по адресу http://localhost:3000, чтобы начать играть.
